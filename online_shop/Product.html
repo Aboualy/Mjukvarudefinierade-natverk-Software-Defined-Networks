@@ -1,0 +1,226 @@
+<html>
+<head>
+<title>Microservice & App</title>
+
+<link href="https://fonts.googleapis.com/css?family=Lato:300,400,900" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Abril+Fatface" rel="stylesheet">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+
+<style>
+    body{
+        margin: 0;
+        font-family: 'Lato', sans-serif;
+        font-weight: 200;
+    }
+
+    #background{
+        position: absolute;
+        width: 100%;
+        height: 100%;
+
+        background-color: white;
+        transition: all 0.3s;
+    }
+
+  
+
+    .button{
+        margin: 10px;
+        padding: 10px;
+        transition: all 0.3s;
+        cursor: pointer;
+        width: 120px;
+        text-align: center;
+        color: #fff;
+        background-color: #add8e6;
+    }
+
+   
+
+    #slo{
+        position: absolute;
+        width: 80%;
+        height: 100%;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        margin: auto;
+        color: #add8e6;
+        text-align: center;
+        transition: all 0.3s;
+        pointer-events: none;
+    }
+
+    #slo .title{
+        font-family: 'Abril Fatface', cursive;
+        font-size: 40px;
+        margin-bottom: 10px;
+    }
+    #slo p{
+        font-size: 20px;
+        margin-top: 10px;
+    }
+
+    #cod{
+        margin-left: calc(50% - 60px);
+        margin-top: 60px;
+        pointer-events: all;
+    }
+   
+	
+
+</style>
+
+
+</head>
+<body>  
+    <div id="background"></div>
+     
+	<div id="requestfs"></div>
+    
+    <div id="slo" class="sign">
+       <p class="title">Welcome To My Product Page<br></p>
+		
+      <div id="cod" class="sign"  ></div>
+       <br><h><b><b>You have to type an id, so that you can search, delete or get all the products </b></b></h></br>
+	   <input name="search" type="text" maxlength="200" id="search" style="pointer-events: all;"/>
+       <button class="button sign" onclick="searchID()" style="pointer-events: all;"> Search ID </button>
+	   <button class="button sign" onclick="del()" style="pointer-events: all;"> Delete ID </button>
+       <button class="button sign" onclick="showAll()" style="pointer-events: all;"> Get all IDs</button>
+	   
+	    <br><h><b><b>Add a new product</b></b></h></br>
+	   <p> ID: <br><input name="search" type="text" maxlength="100" id="id" style="pointer-events: all;"/></p>
+	   <p> Name: <br><input name="search" type="text" maxlength="100" id="name" style="pointer-events: all;"/></p>
+	   <p> Product Description: <br><input name="search" type="text" maxlength="100" id="productDescription" style="pointer-events: all;"/><p>
+       <p> Product Guarantee: <br><input name="search" type="text" maxlength="100" id="productGuarantee" style="pointer-events: all;"/><p>
+       <p> Product Price: <br><input name="search" type="text" maxlength="100" id="productPrice" style="pointer-events: all;"/><p>
+	  
+       <button class="button sign" onclick="save()" style="pointer-events: all;"> Add/Update a product </button>
+	   
+	   
+	   
+	   
+    </div>
+	
+	<script>
+	
+	function del()
+		{
+			var id = document.getElementById("search").value;
+			
+			$.ajax({
+				url: "http://localhost:8080/products/" + id, 
+				type: "DELETE"
+			});
+		}
+		
+	
+	
+	function save()
+		{
+			var ProductData = {
+				id: document.getElementById("id").value,
+				name: document.getElementById("name").value,
+				productDescription: document.getElementById("productDescription").value,
+                productGuarantee: document.getElementById("productGuarantee").value,
+                productPrice: document.getElementById("productPrice").value}
+			
+			$.ajax({
+				url: "http://localhost:8080/products", 
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
+				},
+				type: "POST",
+				dataType: "json",
+				data: JSON.stringify(ProductData)
+			});
+		}
+			
+		 function searchID()
+		{
+			var id = document.getElementById("search").value;
+			$("#slo").html("");
+		
+			$.getJSON("http://localhost:8080/products/" + id,  function(dd)
+			{var $slo = $('#slo')
+			$slo.append("<p>ID: " + dd.id + "</p>").append("<p>Product Name: " + dd.name + "</p>").append("<p>Product Description: " + dd.productDescription + "</p>").append("<p>Product Guarantee: " + dd.productGuarantee + "</p>").append("<p>Product Price: " + dd.productPrice + "</p>")});}
+				
+	
+	
+		
+		function showAll()
+		
+		{
+			$("#slo").html("");
+			$.getJSON("http://localhost:8080/products",  function(dd)
+			{
+				for (var i in dd) {
+				var $slo = $('#slo')
+				   var productCustomers = dd[i].productProviders.map(productProvider => productProvider.productCustomers.map(productCustomer=>productCustomer.id + ' ' + productCustomer.name+ ' ' +productCustomer.address+ ' ' +productCustomer.phoneNumber+ ' ' +productCustomer.email))
+				$slo.append("<p>ID: " + dd[i].id + "</p>").append("<p>Product Name: " + dd[i].name + "</p>").append("<p>Product Description: " + dd[i].productDescription + "</p>").append("<p>Product Guarantee: " + dd[i].productGuarantee + "</p>").append("<p>Product Price: " + dd[i].productPrice + "</p>").append("<p>productProviders: " + dd[i].productProviders.map(productProvider => productProvider.id + ' ' + productProvider.name+ ' ' +productProvider.shopBrancheNr+ ' ' +productProvider.address+ ' ' +productProvider.phoneNumber+' ' +productProvider.email).join(', ') + "</p>").append("<p>productCustomers: " + [].concat.apply([], productCustomers).join(', ') + "</p>")}});}	
+	</script>
+     
+    <script>
+
+    var timeout;
+
+
+    document.onmousemove = function(){
+        clearTimeout(timeout);
+        document.getElementById('requestfs').style.opacity = "1";
+        document.getElementById('slo').style.opacity = "1";
+        document.getElementById('background').style.cursor = 'default';
+
+        timeout = setTimeout(function(){
+            document.getElementById('requestfs').style.opacity = "0";
+            document.getElementById('slo').style.opacity = "0";
+            document.getElementById('background').style.cursor = 'none';
+        }, 3000);
+    }
+
+
+    document.getElementById('requestfs').addEventListener('click', function() {
+        if (screenfull.enabled) {
+
+
+            if(screenfull.isFullscreen){
+                screenfull.exit();
+            }else{
+                screenfull.request();
+            }
+
+        }
+    });
+
+
+    document.getElementById('cod').addEventListener('click', function() {
+        document.getElementById('slo').style.display = 'none';
+    });
+
+
+    document.getElementById('background').addEventListener('click', function() {
+
+        if(this.style.backgroundColor === 'lightblue'){
+            this.style.backgroundColor = 'white';
+            document.getElementById('requestfs').style.backgroundColor = '#add8e6';
+            document.getElementById('requestfs').style.color = '#FFF';
+            document.getElementById('slo').style.color = '#add8e6';
+
+
+
+        }else{
+
+            this.style.backgroundColor = 'lightblue';
+            document.getElementById('requestfs').style.backgroundColor = '#FFF';
+            document.getElementById('requestfs').style.color = '#add8e6';
+            document.getElementById('slo').style.color = '#FFF';
+        }
+    });
+
+    </script>
+	<script type="text/javascript">
+</body>
+</html>

@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.example.OnlineShopTest
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 8.667 sec - in com.example.OnlineShopTest

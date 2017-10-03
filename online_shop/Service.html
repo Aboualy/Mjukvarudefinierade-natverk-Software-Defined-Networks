@@ -1,0 +1,229 @@
+<html>
+<head>
+<title>Microservice & App</title>
+
+<link href="https://fonts.googleapis.com/css?family=Lato:300,400,900" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Abril+Fatface" rel="stylesheet">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+
+<style>
+    body{
+        margin: 0;
+        font-family: 'Lato', sans-serif;
+        font-weight: 200;
+    }
+
+    #background{
+        position: absolute;
+        width: 100%;
+        height: 100%;
+
+        background-color: white;
+        transition: all 0.3s;
+    }
+
+  
+
+    .button{
+        margin: 10px;
+        padding: 10px;
+        transition: all 0.3s;
+        cursor: pointer;
+        width: 120px;
+        text-align: center;
+        color: #fff;
+        background-color: #add8e6;
+    }
+
+   
+
+    #slo{
+        position: absolute;
+        width: 80%;
+        height: 100%;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        margin: auto;
+        color: #add8e6;
+        text-align: center;
+        transition: all 0.3s;
+        pointer-events: none;
+    }
+
+    #slo .title{
+        font-family: 'Abril Fatface', cursive;
+        font-size: 40px;
+        margin-bottom: 10px;
+    }
+    #slo p{
+        font-size: 20px;
+        margin-top: 10px;
+    }
+
+    #cod{
+        margin-left: calc(50% - 60px);
+        margin-top: 60px;
+        pointer-events: all;
+    }
+   
+	
+
+</style>
+
+
+</head>
+<body>  
+    <div id="background"></div>
+     
+	<div id="sign"></div>
+    
+    <div id="slo" class="sign">
+       <p class="title">Welcome To My Service Page<br></p>
+		
+      <div id="cod" class="sign"  ></div>
+       <br><h><b><b>Using the service id you can search, delete or get all the services </b></b></h></br>
+	   <input name="search" type="text" maxlength="200" id="search" style="pointer-events: all;"/>
+       <button class="button sign" onclick="searchID()" style="pointer-events: all;"> Search ID </button>
+	   <button class="button sign" onclick="del()" style="pointer-events: all;"> Delete ID </button>
+       <button class="button sign" onclick="showAll()" style="pointer-events: all;"> Get all IDs</button>
+	   
+	   <br><h><b><b>Add a new service</b></b></h></br>
+   
+	   
+	   <p> ID: <br><input name="search" type="text" maxlength="100" id="newid" style="pointer-events: all;"/></p>
+	   <p> Name: <br><input name="search" type="text" maxlength="100" id="name" style="pointer-events: all;"/></p>
+	   <p> Customer address: <br><input name="search" type="text" maxlength="100" id="serviceDescription" style="pointer-events: all;"/><p>
+       <p> Customer phoneNumber: <br><input name="search" type="text" maxlength="100" id="serviceLength" style="pointer-events: all;"/><p>
+       <p> Customer email: <br><input name="search" type="text" maxlength="100" id="servicePrice" style="pointer-events: all;"/><p>
+	   
+       <button class="button sign" onclick="save()" style="pointer-events: all;"> Add/Update a product </button>
+	   
+	   
+	   
+	   
+</div>
+	<script>
+	
+	function del()
+		{
+			var id = document.getElementById("search").value;
+			
+			$.ajax({
+				url: "http://localhost:8080/services/" + id, 
+				type: "DELETE"
+			});
+		}
+		
+	
+	
+	function save()
+		{
+			
+			var CustomerData = {
+				id: document.getElementById("newid").value,
+				name: document.getElementById("name").value,
+				serviceDescription: document.getElementById("serviceDescription").value,
+                serviceLength: document.getElementById("serviceLength").value,
+                servicePrice: document.getElementById("servicePrice").value
+				
+			}
+			$.ajax({
+				url: "http://localhost:8080/services", 
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
+				},
+				type: "POST",
+				dataType: "json",
+				data: JSON.stringify(CustomerData)
+			});
+		}
+			
+		 function searchID()
+		{
+			var id = document.getElementById("search").value;
+			$("#slo").html("");
+		
+			$.getJSON("http://localhost:8080/services/" + id,  function(dd)
+			{var $slo = $('#slo')
+			$slo.append("<p>ID: " + dd.id + "</p>").append("<p>Service Name: " + dd.name + "</p>").append("<p>Service Description: " + dd.serviceDescription + "</p>").append("<p>Service Length: " + dd.serviceLength + "</p>").append("<p>Service Price: " + dd.servicePrice + "</p>")});}
+				
+	
+	
+		
+		function showAll()
+		
+		{
+			$("#slo").html("");
+			$.getJSON("http://localhost:8080/services",  function(dd)
+			{
+				for (var i in dd) {
+				var $slo = $('#slo')
+				   var serviceCustomers = dd[i].serviceProviders.map(serviceProvider => serviceProvider.serviceCustomers.map(serviceCustomer=>serviceCustomer.id + ' ' + serviceCustomer.name+ ' ' +serviceCustomer.address+ ' ' +serviceCustomer.phoneNumber+ ' ' +serviceCustomer.email))
+				$slo.append("<p>ID: " + dd[i].id + "</p>").append("<p>Service Name: " + dd[i].name + "</p>").append("<p>Service Description: " + dd[i].serviceDescription + "</p>").append("<p>Service Length: " + dd[i].serviceLength + "</p>").append("<p>Service Price: " + dd[i].servicePrice + "</p>").append("<p>serviceProviders: " + dd[i].serviceProviders.map(serviceProvider => serviceProvider.id + ' ' + serviceProvider.name+ ' ' +serviceProvider.companyType+ ' ' +serviceProvider.address+ ' ' +serviceProvider.phoneNumber+' ' +serviceProvider.email).join(', ') + "</p>").append("<p>serviceCustomers: " + [].concat.apply([], serviceCustomers).join(', ') + "</p>")}});}	
+	</script>
+     
+    <script>
+
+    var timeout;
+
+
+    document.onmousemove = function(){
+        clearTimeout(timeout);
+        document.getElementById('sign').style.opacity = "1";
+        document.getElementById('slo').style.opacity = "1";
+        document.getElementById('background').style.cursor = 'default';
+
+        timeout = setTimeout(function(){
+            document.getElementById('sign').style.opacity = "0";
+            document.getElementById('slo').style.opacity = "0";
+            document.getElementById('background').style.cursor = 'none';
+        }, 3000);
+    }
+
+
+    document.getElementById('sign').addEventListener('click', function() {
+        if (screenfull.enabled) {
+
+
+            if(screenfull.isFullscreen){
+                screenfull.exit();
+            }else{
+                screenfull.request();
+            }
+
+        }
+    });
+
+
+    document.getElementById('cod').addEventListener('click', function() {
+        document.getElementById('slo').style.display = 'none';
+    });
+
+
+    document.getElementById('background').addEventListener('click', function() {
+
+        if(this.style.backgroundColor === 'lightblue'){
+            this.style.backgroundColor = 'white';
+            document.getElementById('sign').style.backgroundColor = '#add8e6';
+            document.getElementById('sign').style.color = '#FFF';
+            document.getElementById('slo').style.color = '#add8e6';
+
+
+
+        }else{
+
+            this.style.backgroundColor = 'lightblue';
+            document.getElementById('sign').style.backgroundColor = '#FFF';
+            document.getElementById('sign').style.color = '#add8e6';
+            document.getElementById('slo').style.color = '#FFF';
+        }
+    });
+
+    </script>
+	<script type="text/javascript">
+</body>
+</html>

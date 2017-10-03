@@ -1,0 +1,277 @@
+<html>
+<head>
+<title>Microservice & App</title>
+
+<link href="https://fonts.googleapis.com/css?family=Lato:300,400,900" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Abril+Fatface" rel="stylesheet">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+
+<style>
+    body{
+        margin: 0;
+        font-family: 'Lato', sans-serif;
+        font-weight: 200;
+    }
+
+    #background{
+        position: absolute;
+        width: 100%;
+        height: 100%;
+
+        background-color: white;
+        transition: all 0.4s;
+    }
+
+  
+
+    .button{
+        margin: 10px;
+        padding: 10px;
+        transition: all 0.4s;
+        cursor: pointer;
+        width: 120px;
+        text-align: center;
+        color: #fff;
+        background-color: #add8e6;
+    }
+
+   
+
+    #slo{
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        margin: auto;
+        color: #add8e6;
+        text-align: center;
+        transition: all 0.4s;
+        pointer-events: none;
+    }
+
+    #slo .title{
+        font-family: 'Abril Fatface', cursive;
+        font-size: 40px;
+        margin-bottom: 10px;
+    }
+    #slo p{
+        font-size: 20px;
+        margin-top: 10px;
+    }
+
+    #IDDD{
+        margin-left: calc(50% - 60px);
+        margin-top: 60px;
+        pointer-events: all;
+    }
+   
+	
+
+</style>
+
+
+</head>
+<body>  
+    <div id="background"></div>
+     
+	<div id="tagg"></div>
+    
+    <div id="slo" class="noselect">
+       <p class="title">Welcome To My Product-Customer Page<br></p>
+		
+      <div id="IDDD" class="noselect"  ></div>
+       
+	   <input name="search" type="text" maxlength="200" id="search" style="pointer-events: all;"/>
+       <button class="button noselect" onclick="GetACustomer()" style="pointer-events: all;"> Get a customer by its Id </button>
+	   <button class="button noselect" onclick="GetACustomerByProviderId()" style="pointer-events: all;"> Get a customer by provider Id </button>
+       <button class="button noselect" onclick="getAllCustomers()" style="pointer-events: all;"> Get all Customers</button>
+	   <br><h><b><b>Get a specific customer by productId and providerId</b></b></h></br>
+	   <input name="productId" type="text" maxlength="200" id="productId" style="pointer-events: all;"/>
+	   <input name="providerId" type="text" maxlength="200" id="providerId" style="pointer-events: all;"/>
+	   <button class="button noselect" onclick="GetACustomerByProviderIdAnsProductId()" style="pointer-events: all;"> Get </button>
+	   <br><h><b><b>Get/Delete a specific customer by productId, providerId and cutomerId</b></b></h></br>
+	   
+	   <input name="productId1" type="text" maxlength="200" id="productId1" style="pointer-events: all;"/>
+	   <input name="providerId1" type="text" maxlength="200" id="providerId1" style="pointer-events: all;"/>
+	   <input name="customerId" type="text" maxlength="200" id="customerId" style="pointer-events: all;"/>
+	   <button class="button noselect" onclick="GetACustomerByProviderIdAnsProductIdAndCustomerId()" style="pointer-events: all;"> Get </button>
+	   <button class="button noselect" onclick="deleteCustomer()" style="pointer-events: all;"> Delete </button>
+	   <br><h><b><b>Add a new customer</b></b></h></br>
+	   <p> Product Id: <br><input name="search" type="text" maxlength="100" id="productIdd" style="pointer-events: all;"/></p>
+	   <p> ProviderId: <br><input name="search" type="text" maxlength="100" id="providerIdd" style="pointer-events: all;"/></p>
+	   <p> ID: <br><input name="search" type="text" maxlength="100" id="newid" style="pointer-events: all;"/></p>
+	   <p> Name: <br><input name="search" type="text" maxlength="100" id="name" style="pointer-events: all;"/></p>
+	   <p> Customer address: <br><input name="search" type="text" maxlength="100" id="address" style="pointer-events: all;"/><p>
+       <p> Customer phoneNumber: <br><input name="search" type="text" maxlength="100" id="phoneNumber" style="pointer-events: all;"/><p>
+       <p> Customer email: <br><input name="search" type="text" maxlength="100" id="email" style="pointer-events: all;"/><p>
+	   
+       <button class="button noselect" onclick="save()" style="pointer-events: all;"> Add/Update a product </button>
+	   
+	   
+	   
+	   
+    </div>
+	
+	<script>
+		function getAllCustomers()
+		{$("#slo").html("");
+		   $.getJSON("http://localhost:8080/productCustomers",  function(dd)
+			{
+				for (var i in dd) {
+				var $slo = $('#slo')
+				$slo.append("<p>ID: " + dd[i].id + "</p>").append("<p>Customer Name: " + dd[i].name + "</p>").append("<p>Customer address: " + dd[i].address + "</p>").append("<p>Customer phoneNumber: " + dd[i].phoneNumber + "</p>").append("<p>Customer email: " + dd[i].email + "</p>")}});}		
+	
+	 function GetACustomer()
+		{
+			var id = document.getElementById("search").value;
+			$("#slo").html("");
+		
+			$.getJSON("http://localhost:8080/productCustomers/" + id,  function(dd)
+			{
+				var $slo = $('#slo')
+				$slo.append("<p>ID: " + dd.id + "</p>").append("<p>Customer Name: " + dd.name + "</p>").append("<p>Customer address: " + dd.address + "</p>").append("<p>Customer phoneNumber: " + dd.phoneNumber + "</p>").append("<p>Customer email: " + dd.email + "</p>")});}	
+	
+	
+	function GetACustomerByProviderId()
+		{   var id = document.getElementById("search").value;
+			$("#slo").html("");
+		
+			$.getJSON("http://localhost:8080/products/providers/"+id+"/productCustomers",  function(dd)
+			{for (var i in dd) {
+				var $slo = $('#slo')
+				$slo.append("<p>ID: " + dd[i].id + "</p>").append("<p>Customer Name: " + dd[i].name + "</p>").append("<p>Customer address: " + dd[i].address + "</p>").append("<p>Customer phoneNumber: " + dd[i].phoneNumber + "</p>").append("<p>Customer email: " + dd[i].email + "</p>")}});}		
+	function GetACustomerByProviderIdAnsProductId()
+		{   var productId = document.getElementById("productId").value;
+		    var providerId = document.getElementById("providerId").value;
+			$("#slo").html("");
+		
+			$.getJSON("http://localhost:8080/products/"+productId+"/providers/"+providerId+"/productCustomers",  function(dd)
+			{for (var i in dd) {
+				var $slo = $('#slo')
+				$slo.append("<p>ID: " + dd[i].id + "</p>").append("<p>Customer Name: " + dd[i].name + "</p>").append("<p>Customer address: " + dd[i].address + "</p>").append("<p>Customer phoneNumber: " + dd[i].phoneNumber + "</p>").append("<p>Customer email: " + dd[i].email + "</p>")}});}		
+	
+	function GetACustomerByProviderIdAnsProductIdAndCustomerId()
+		{   var customerId = document.getElementById("customerId").value;
+     		var productId1 = document.getElementById("productId1").value;
+		    var providerId1 = document.getElementById("providerId1").value;
+			$("#slo").html("");
+		
+			$.getJSON("http://localhost:8080/products/"+productId1+"/providers/"+providerId1+"/productCustomers/"+customerId,  function(dd)
+			{
+			var $slo = $('#slo')
+				$slo.append("<p>ID: " + dd.id + "</p>").append("<p>Customer Name: " + dd.name + "</p>").append("<p>Customer address: " + dd.address + "</p>").append("<p>Customer phoneNumber: " + dd.phoneNumber + "</p>").append("<p>Customer email: " + dd.email + "</p>")});}	
+	
+	
+	function deleteCustomer()
+		{
+		     var customerId = document.getElementById("customerId").value;
+     		var productId1 = document.getElementById("productId1").value;
+		    var providerId1 = document.getElementById("providerId1").value;
+			
+			$.ajax({
+				url: "http://localhost:8080/products/"+productId1+"/providers/"+providerId1+"/productCustomers/"+customerId, 
+				type: "DELETE"
+			});
+		}
+	
+	
+	
+	function save()
+		{
+		    
+			var CustomerData = {
+				id: document.getElementById("newid").value,
+				name: document.getElementById("name").value,
+				address: document.getElementById("address").value,
+                phoneNumber: document.getElementById("phoneNumber").value,
+                email: document.getElementById("email").value
+				
+			}
+			var productId = document.getElementById("productIdd").value;
+		    var providerId = document.getElementById("providerIdd").value;
+			
+			$.ajax({
+				url: "http://localhost:8080/products/"+ productId +"/providers/"+ providerId + "/productCustomers/",
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
+				},
+				type: "POST",
+				dataType: "json",
+				data: JSON.stringify(CustomerData)
+			});
+		}
+	
+	
+	
+	
+	
+	
+	
+	</script>
+     
+    <script>
+
+    var timeout;
+
+
+    document.onmousemove = function(){
+        clearTimeout(timeout);
+        document.getElementById('tagg').style.opacity = "1";
+        document.getElementById('slo').style.opacity = "1";
+        document.getElementById('background').style.cursor = 'default';
+
+        timeout = setTimeout(function(){
+            document.getElementById('tagg').style.opacity = "0";
+            document.getElementById('slo').style.opacity = "0";
+            document.getElementById('background').style.cursor = 'none';
+        }, 3000);
+    }
+
+
+    document.getElementById('tagg').addEventListener('click', function() {
+        if (screenfull.enabled) {
+
+
+            if(screenfull.isFullscreen){
+                screenfull.exit();
+            }else{
+                screenfull.request();
+            }
+
+        }
+    });
+
+
+    document.getElementById('IDDD').addEventListener('click', function() {
+        document.getElementById('slo').style.display = 'none';
+    });
+
+
+    document.getElementById('background').addEventListener('click', function() {
+
+        if(this.style.backgroundColor === 'lightblue'){
+            this.style.backgroundColor = 'white';
+            document.getElementById('tagg').style.backgroundColor = '#add8e6';
+            document.getElementById('tagg').style.color = '#FFF';
+            document.getElementById('slo').style.color = '#add8e6';
+
+
+
+        }else{
+
+            this.style.backgroundColor = 'lightblue';
+            document.getElementById('tagg').style.backgroundColor = '#FFF';
+            document.getElementById('tagg').style.color = '#add8e6';
+            document.getElementById('slo').style.color = '#FFF';
+        }
+    });
+
+    </script>
+	<script type="text/javascript">
+</body>
+</html>
